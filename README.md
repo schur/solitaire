@@ -43,7 +43,7 @@ bit is set.
 [2]: http://graphics.stanford.edu/~seander/bithacks.html
 
 ### Credits
-The original code was written by lackflux.com <pegsolitaire@blackflux.com>
+The original code was written by blackflux.com <pegsolitaire@blackflux.com>
 
 <https://blackflux.wordpress.com/2014/04/30/peg-solitaire-brute-force/comment-page-1/>
 
