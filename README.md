@@ -41,3 +41,12 @@ bit is set.
 
 [1]: http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.6.4826
 [2]: http://graphics.stanford.edu/~seander/bithacks.html
+
+### Credits
+The original code was written by lackflux.com <pegsolitaire@blackflux.com>
+
+<https://blackflux.wordpress.com/2014/04/30/peg-solitaire-brute-force/comment-page-1/>
+
+This repository contains the Golang implementation, with some changes:
+- representing a move as a struct, rather than a simple three-number array
+- improved output for more intuitive readability of the solution
