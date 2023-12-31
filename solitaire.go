@@ -32,8 +32,6 @@ var INITIAL_BOARD, _ = strconv.ParseUint("0"+
 	"0011100"+
 	"0011100", 2, 64)
 
-//	const INITIAL_BOARD uint64 = 124141717933596
-
 // goal board (one marble in center)
 var GOAL_BOARD, _ = strconv.ParseUint("0"+
 	"0000000"+
@@ -43,8 +41,6 @@ var GOAL_BOARD, _ = strconv.ParseUint("0"+
 	"0000000"+
 	"0000000"+
 	"0000000", 2, 64)
-
-//	const GOAL_BOARD uint64 = 16777216
 
 // the structure represtenting a move is composed as follows:
 // - first entry (after) holds the peg that is added by the move
