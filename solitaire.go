@@ -3,22 +3,48 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 )
 
-// board that contains a ball in every available slot
-const VALID_BOARD_CELLS uint64 = 124141734710812
+// the below constants are binary representations of the bitmaps that model the board
+// a "1" represents a marble in the slot, a "0" rpresents an empty slot
+// However, in VALID_BOARD_CELLS a "1" represents a valid slot
+
+// the route via strconv is done to break the binary numbers into multiple lines to visualise the board
+
+// Valid Cells that can contain a ball (i.e. thev available slots)
+var VALID_BOARD_CELLS, _ = strconv.ParseUint("0"+
+	"0011100"+
+	"0011100"+
+	"1111111"+
+	"1111111"+
+	"1111111"+
+	"0011100"+
+	"0011100", 2, 64)
 
 // initial board (one marble free in center)
-const INITIAL_BOARD uint64 = 124141717933596
+var INITIAL_BOARD, _ = strconv.ParseUint("0"+
+	"0011100"+
+	"0011100"+
+	"1111111"+
+	"1110111"+
+	"1111111"+
+	"0011100"+
+	"0011100", 2, 64)
+
+//	const INITIAL_BOARD uint64 = 124141717933596
 
 // goal board (one marble in center)
-const GOAL_BOARD uint64 = 16777216
+var GOAL_BOARD, _ = strconv.ParseUint("0"+
+	"0000000"+
+	"0000000"+
+	"0001000"+
+	"0000000"+
+	"0000000"+
+	"0000000"+
+	"0000000", 2, 64)
 
-const colorReset = "\033[0m"
-const colorRed = "\033[31m"
-const colorBlue = "\033[34m"
-const colorGrey = "\033[37m"
-const colorWhite = "\033[97m"
+//	const GOAL_BOARD uint64 = 16777216
 
 // the structure represtenting a move is composed as follows:
 // - first entry (after) holds the peg that is added by the move
@@ -27,6 +53,8 @@ const colorWhite = "\033[97m"
 type Move struct {
 	after, before, all uint64
 }
+
+// Global Variables:
 
 // list of seen boards - this is used to prevent rechecking of paths
 var seenBoards = map[uint64]bool{}
@@ -38,6 +66,7 @@ var Solution = make([]uint64, 0, 32)
 var Moves = make([]Move, 0, 76)
 
 func main() {
+
 	// generate all possible moves
 
 	// holds all starting positions in west-east direction
@@ -60,30 +89,9 @@ func main() {
 	// start recursively search for the initial board from the goal (reverse direction!)
 	search(GOAL_BOARD)
 
-	// print the found solution
-	for i := 0; i < len(Solution); i++ {
-		// loop over all 7 rows
-		var k int
-		for m := 0; m < 7; m++ {
-			// print 10 steps in 1 row
-			for k = 0; k < 16; k++ {
-				//fmt.Printf("i: %d, m: %d, k: %d", i, m, k)
-				previous := i + k - 1
-				if previous < 0 {
-					previous = 0
-				}
-				printLine(Solution[i+k], Solution[previous], m)
-				if (i + k) == len(Solution)-1 {
-					k++
-					break
-				}
-				fmt.Printf("   ")
-			}
-			fmt.Println()
-		}
-		i = i + k - 1
-		fmt.Println("-------------")
-	}
+	// print the solution
+	PrintSolution()
+
 }
 
 // do the calculation recursively by starting from
@@ -128,14 +136,32 @@ func createMoves(bit1 int, bit2 int, bit3 int, moves []Move) []Move {
 	return moves
 }
 
-// print the board
-func printBoard(board uint64) {
-	// loop over all 7 rows
-	for i := 0; i < 7; i++ {
-		printLine(board, board, i)
-		fmt.Println()
+// print the found solution
+func PrintSolution() {
+
+	for i := 0; i < len(Solution); i++ {
+		// loop over all 7 rows
+		var k int
+		for m := 0; m < 7; m++ {
+			// print 16 steps in 1 row
+			for k = 0; k < 16; k++ {
+				//fmt.Printf("i: %d, m: %d, k: %d", i, m, k)
+				previous := i + k - 1
+				if previous < 0 {
+					previous = 0
+				}
+				printLine(Solution[i+k], Solution[previous], m)
+				if (i + k) == len(Solution)-1 {
+					k++
+					break
+				}
+				fmt.Printf("   ")
+			}
+			fmt.Println()
+		}
+		i = i + k - 1
+		fmt.Println("-------------")
 	}
-	fmt.Println("-------------")
 }
 
 // print one line of the board
@@ -144,6 +170,12 @@ func printBoard(board uint64) {
 // pass the board from the first argument again to not highlight any changes
 // third argument: line number to print
 func printLine(board uint64, prev_board uint64, line int) {
+	const colorReset = "\033[0m"
+	const colorRed = "\033[31m"
+	const colorBlue = "\033[34m"
+	const colorGrey = "\033[37m"
+	const colorWhite = "\033[97m"
+
 	// loop over all cells (the board is 7 x 7)
 	var cell uint64 = 1 << (7 * line) // move to first cell in the line
 	for i := 0; i < 7; i++ {
@@ -170,19 +202,4 @@ func printLine(board uint64, prev_board uint64, line int) {
 		cell = cell << 1 // move to next cell
 		// print new line after 7 slots
 	}
-}
-
-// print a move
-func printMove(move Move) {
-	// loop over all 7 rows
-	for i := 0; i < 7; i++ {
-		printLine(move.after, move.before, i)
-		fmt.Printf("   ")
-		printLine(move.before, move.before, i)
-		fmt.Printf("   ")
-		printLine(move.all, move.all, i)
-		fmt.Println()
-
-	}
-	fmt.Println("-------------")
 }
